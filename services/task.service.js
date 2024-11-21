@@ -39,7 +39,7 @@ class TodoService {
         title: titleCase(title),
         description: titleCase(description),
         category: titleCase(category),
-        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        dueDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
       };
 
       const updatedData = removeNullUndefined(data);
@@ -86,7 +86,7 @@ class TodoService {
         title: titleCase(title),
         description: titleCase(description),
         category: titleCase(category),
-        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        dueDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
       };
 
       const updatedData = removeNullUndefined(data);
@@ -269,6 +269,77 @@ class TodoService {
       } else {
         return res.status(201).json({
           message: "tasks not completed",
+          status: "fail",
+          code: 201,
+          data: null,
+        });
+      }
+    } catch (error) {
+      log.error("error from [AUTH SERVICE]: ", error);
+      throw error;
+    }
+  }
+
+  //setDueDateByIdService
+  async setDueDateByIdService(req, res) {
+    try {
+      const { taskId, dueDate } = req.body;
+      if (!taskId) {
+        return res.status(400).json({
+          message: "please enter taskId",
+          status: "fail",
+          code: 201,
+          data: null,
+        });
+      }
+
+      if (!dueDate) {
+        return res.status(400).json({
+          message: "please enter dueDate",
+          status: "fail",
+          code: 201,
+          data: null,
+        });
+      }
+
+      const isTaskIdExist = await taskDao.getTaskById(taskId);
+      if (!isTaskIdExist.data) {
+        return res.status(400).json({
+          message: "task not exist",
+          status: "fail",
+          code: 201,
+          data: null,
+        });
+      }
+
+      const [day, month, year] = dueDate.split("-");
+      const newDueDate = new Date(`${year}-${month}-${day}`);
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (newDueDate < today) {
+        return res.status(400).json({
+          message:
+            "due date cannot be in the past. Please provide today’s or a future date.",
+          status: "fail",
+          code: 201,
+          data: null,
+        });
+      }
+
+      const result = await taskDao.addDueDate(taskId, newDueDate);
+
+      if (result.data) {
+        return res.status(200).json({
+          message: "due date has been added successfully",
+          status: "success",
+          code: 200,
+          data: result.data,
+        });
+      } else {
+        return res.status(201).json({
+          message: "due date is not added",
           status: "fail",
           code: 201,
           data: null,

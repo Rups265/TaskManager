@@ -34,10 +34,19 @@ router.route("/deleteTaskById").delete(async (req, res) => {
   }
 });
 
-
 router.route("/markTaskAsCompleteById").post(async (req, res) => {
   try {
     const result = await todoControllers.markTaskAsCompleteById(req, res);
+    return result;
+  } catch (error) {
+    log.error("Internal Server Error : ", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.route("/setDueDateById").post(async (req, res) => {
+  try {
+    const result = await todoControllers.setDueDateById(req, res);
     return result;
   } catch (error) {
     log.error("Internal Server Error : ", error);
@@ -64,4 +73,16 @@ router.route("/getTaskById").post(async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+router.route("/addDueDateById").post(async (req, res) => {
+  try {
+    const result = await todoControllers.addDueDateById(req, res);
+    return result;
+  } catch (error) {
+    log.error("Internal Server Error : ", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+//addDueDate
 module.exports = router;

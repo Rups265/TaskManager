@@ -163,5 +163,39 @@ class TASKDao {
       throw error;
     }
   }
+
+  //addDueDate
+  async addDueDate(taskId, newDueDate) {
+    try {
+      const TASKInfo = await taskModel.findOneAndUpdate(
+        { taskId },
+        {
+          dueDate: newDueDate,
+        },
+        {
+          new: true,
+        }
+      );
+      log.info("TASK updated");
+      if (TASKInfo) {
+        return {
+          message: "TASK updated successful",
+          status: "success",
+          code: 200,
+          data: TASKInfo,
+        };
+      } else {
+        return {
+          message: "TASK update fail",
+          status: "fail",
+          code: 201,
+          data: null,
+        };
+      }
+    } catch (error) {
+      log.error("Error from [TASK DAO] : ", error);
+      throw error;
+    }
+  }
 }
 module.exports = new TASKDao();

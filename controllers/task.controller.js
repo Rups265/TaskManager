@@ -53,5 +53,15 @@ class TodoController {
       throw error;
     }
   }
+
+  //setDueDateById
+  async addDueDateById(req, res) {
+    try {
+      const result = await todoService.setDueDateByIdService(req, res);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 module.exports = new TodoController();

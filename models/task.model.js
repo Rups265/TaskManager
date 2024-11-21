@@ -21,7 +21,8 @@ const TaskSchema = new mongoose.Schema({
     default: false,
   },
   dueDate: {
-    type: Date,
+    type: String,
+    trim: true,
   },
   category: {
     type: String,
